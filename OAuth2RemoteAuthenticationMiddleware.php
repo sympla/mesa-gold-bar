@@ -1,8 +1,8 @@
 <?php
 
-namespace Sympla\ClientAuthentication;
+namespace Sympla\RemoteAuthentication;
 
-use Sympla\ClientAuthentication\Exception\InvalidCredentialsException;
+use Sympla\RemoteAuthentication\Exception\InvalidCredentialsException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Interop\Container\ContainerInterface;
@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
  * Class OAuth2ClientCredentialsAuthentication
  * @package Authentication
  */
-class OAuth2ClientCredentialsAuthentication
+class OAuth2RemoteAuthenticationMiddleware
 {
     /** @var ContainerInterface */
     private $container = null;
@@ -54,37 +54,9 @@ class OAuth2ClientCredentialsAuthentication
         $token = $request->getHeaderLine('Authorization');
 
         try {
-            if (empty($token)) {
-                throw new InvalidCredentialsException(
-                    'There needs to be an Authorization header with a Bearer token to access this route.'
-                );
-            }
+            $authenticator = new OAuth2RemoteAuthentication(new Client, $this->options['authentication_server']);
+            $user = $authenticator->getUserFromRequest($request);
 
-            $params = explode(" ", $token);
-            if ($params[0] !== 'Bearer' || count($params) !== 2) {
-                throw new InvalidCredentialsException(
-                    'The information passed in the Authorization header is not a valid Bearer token.'
-                );
-            }
-
-            $accessToken = $params[1];
-
-            $client = new Client;
-            try {
-                $response = $client->get(
-                    $this->options['authentication_server'],
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer ' . $accessToken
-                        ]
-                    ]
-                );
-            } catch (RequestException $e) {
-                $error = json_decode($e->getResponse()->getBody()->getContents(), true)['error_description'];
-                throw new InvalidCredentialsException($error);
-            }
-
-            $user = json_decode($response->getBody()->getContents(), true);
             $this->container['user'] = $user;
 
             return $next($request, $response);
