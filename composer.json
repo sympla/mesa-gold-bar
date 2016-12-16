@@ -1,0 +1,18 @@
+{
+    "name": "sympla/client-authentication-middleware",
+    "description": "A middleware that provides Client authentication under the ClientCredentials OAuth2 flow.",
+    "type": "library",
+    "license": "PROPRIETARY",
+    "authors": [
+        {
+            "name": "Pedro Cordeiro",
+            "email": "pedro.cordeiro@sympla.com.br"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Sympla\\ClientAuthentication\\": "."
+        }
+    }
+}
