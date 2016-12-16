@@ -1,6 +1,6 @@
 {
     "name": "sympla/client-authentication-middleware",
-    "description": "A middleware that provides Client authentication under the ClientCredentials OAuth2 flow.",
+    "description": "A library that provides remote user authentication under OAuth2.",
     "type": "library",
     "license": "PROPRIETARY",
     "authors": [
