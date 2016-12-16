@@ -9,7 +9,9 @@
             "email": "pedro.cordeiro@sympla.com.br"
         }
     ],
-    "require": {},
+    "require": {
+        "guzzlehttp/guzzle": "~6.0"
+    },
     "autoload": {
         "psr-4": {
             "Sympla\\ClientAuthentication\\": "."
