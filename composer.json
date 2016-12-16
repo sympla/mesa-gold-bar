@@ -1,5 +1,5 @@
 {
-    "name": "sympla/client-authentication-middleware",
+    "name": "sympla/oauth2-remote-authentication",
     "description": "A library that provides remote user authentication under OAuth2.",
     "type": "library",
     "license": "PROPRIETARY",
