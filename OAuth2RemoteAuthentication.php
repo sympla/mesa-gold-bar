@@ -83,6 +83,6 @@ class OAuth2RemoteAuthentication
         }
 
         $accessToken = $params[1];
-        return $this->getUser($accessToken);
+        return $this->getUserFromToken($accessToken);
     }
 }
