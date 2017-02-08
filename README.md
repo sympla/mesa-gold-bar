@@ -1,5 +1,8 @@
 # sympla/mesa-gold-bar
 
+> Mesa Gold is a resort and bar located within the Westworld Mesa Hub.
+> It is used by the Guests to relax at the end of their visit to the Park. 
+
 This library helps identifying users by their access tokens.
 
 ## Installation
