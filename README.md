@@ -1,34 +1,20 @@
-# OAuth Remote Authentication library
+# sympla/mesa-gold-bar
 
-Essa biblioteca visa auxiliar na identificação de usuários através de seus 
-Access Tokens.
+This library helps identifying users by their access tokens.
 
-## Instalação
+## Installation
 
-Certifique-se de que `packagist.com` esteja adicionado à lista de repositórios
-do seu `composer.json`:
-
-```json
-    {
-        "repositories": [
-            {"type": "composer", "url": "https://repo.packagist.com/sympla/"},
-            {"packagist": false}
-        ]
-    }
-```
-
-Então, instale o pacote:
+Install the package using composer:
 
     $ composer require sympla/oauth-remote-authentication ~1.0
     
-É isso.
+That's it.
 
-## Utilização
+## Usage
 
-O autenticador recebe dois parâmetros em seu construtor: um Guzzle client e uma 
-string com o endpoint de autenticação. Uma vez construído o objeto, você pode 
-identificar um usuário a partir de um PSR-7 request object ou a partir de um
-token, diretamente:
+The authenticator gets two parameters in its constructor: a Guzzle client and an
+authentication endpoint, as a string. Once built, you can identify an user 
+using either the raw token or a PSR-7 request object:
 
 ```php
 <?php 
@@ -43,7 +29,7 @@ $authenticator = new OAuth2RemoteAuthentication(
 );
 
 //Gets the user from the request object
-$request = Request::createFromGlobals(); // hydrates the request object
+$request = Request::createFromGlobals(); // hydrates the psr-7 request object
 $user = $authenticator->getUserFromRequest($request); 
 // Or, alternatively, gets the user from the token directly:
 $token = explode(" ", $_SERVER['HTTP_AUTHORIZATION'])[1];
@@ -53,6 +39,6 @@ var_dump($user); // dumps information fetched from the endpoint server about the
 
 ```
 
-## Autor
+## Author
 
 Pedro Cordeiro <pedro.cordeiro@sympla.com.br>
