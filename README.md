@@ -28,7 +28,7 @@ use Sympla\RemoteAuthentication\OAuth2RemoteAuthentication;
 
 $authenticator = new OAuth2RemoteAuthentication(
     new GuzzleHttp\Client,
-     'https://account.sympla.com.br/api/user/me'
+     'https://example.com/api/whoami'
 );
 
 //Gets the user from the request object
