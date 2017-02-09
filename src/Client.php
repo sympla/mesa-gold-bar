@@ -3,6 +3,8 @@
 namespace Sympla\Auth;
 
 use GuzzleHttp\Client as Guzzle;
+use Psr\Http\Message\RequestInterface;
+use Sympla\Auth\Exception;
 
 class Client
 {
@@ -58,5 +60,53 @@ class Client
         ]);
 
         return json_decode((string)$response->getBody(), true);
+    }
+
+    private function getAccessTokenFrom(RequestInterface $request) : string
+    {
+        if (false === $request->hasHeader('Authorization')) {
+            throw new Exception\InvalidCredentialsException(
+                'There needs to be an Authorization header with a Bearer token to access this route.'
+            );
+        }
+
+        $token = $request->getHeader('Authorization');
+        if (false === preg_match('/Bearer/', $token)) {
+            throw new InvalidCredentialsException(
+                'The information passed in the Authorization header is not a valid Bearer token.'
+            );
+        }
+
+        return $token;
+    }
+
+    public function getUser($accessToken) : array
+    {
+        if ($accessToken instanceof RequestInterface) {
+            $accessToken = $this->getAccessTokenFrom($accessToken);
+        }
+
+        if (true === empty($accessToken)) {
+            throw new Exception\InvalidCredentialsException(
+                'You must provide a token to get informations about an user'
+            );
+        }
+
+        if (false === preg_match('/Bearer/', $accessToken)) {
+            $accessToken = "Bearer ${accessToken}";
+        }
+
+        try {
+            $response = $this->guzzle->get(self::ENDPOINT_USER, [
+                'headers' => [
+                    'Authorization' => $accessToken
+                ]
+            ]);
+
+            return json_decode($response->getBody()->getContents(), true);
+        } catch (RequestException $e) {
+            $error = json_decode($e->getResponse()->getBody()->getContents(), true)['error_description'];
+            throw new InvalidCredentialsException($error);
+        }
     }
 }
