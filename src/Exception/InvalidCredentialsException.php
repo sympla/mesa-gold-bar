@@ -1,6 +1,6 @@
 <?php
 
-namespace Sympla\RemoteAuthentication\Exception;
+namespace Sympla\Auth\Exception;
 
 /**
  * Class InvalidCredentialsException
