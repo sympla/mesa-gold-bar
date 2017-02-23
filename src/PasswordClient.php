@@ -29,22 +29,22 @@ class PasswordClient
 
     /**
      * PasswordClient constructor.
-     * @param Guzzle $httpClient
-     * @param string $clientId
-     * @param string $clientSecret
-     * @param string $userEndpoint
-     * @param string $tokenEndpoint
+     * @param Guzzle $httpClient                A Guzzle ClientInterface
+     * @param string $clientId                  The OAuth client_id
+     * @param string $clientSecret              The OAuth client_secret
+     * @param string $userInformationEndpoint   A full URL to fetch user information from its token
+     * @param string $tokenEndpoint             The endpoint to fetch oauth tokens
      */
     public function __construct(
         Guzzle $httpClient,
         string $clientId,
         string $clientSecret,
-        string $userEndpoint,
+        string $userInformationEndpoint,
         string $tokenEndpoint
     ) {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->userEndpoint = $userEndpoint;
+        $this->userEndpoint = $userInformationEndpoint;
         $this->tokenEndpoint = $tokenEndpoint;
         $this->guzzle = $httpClient;
     }

@@ -19,12 +19,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Sympla\\Auth\\": "./src/"
+            "Sympla\\Auth\\": "src/"
         }
     },
     "autoload-dev": {
       "psr-4": {
-        "Tests\\": "tests"
+        "Tests\\": "tests",
+        "Sympla\\Auth\\": "src/"
       }
     }
 }
