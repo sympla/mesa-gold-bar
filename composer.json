@@ -19,8 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Sympla\\Auth\\": "src/",
-            "Sympla\\Auth\\Middleware\\": "src/Middleware"
+            "Sympla\\Auth\\": "src/"
         }
     },
     "autoload-dev": {
