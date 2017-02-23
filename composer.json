@@ -24,8 +24,7 @@
     },
     "autoload-dev": {
       "psr-4": {
-        "Tests\\": "tests",
-        "Sympla\\Auth\\": "src/"
+        "Tests\\": "tests"
       }
     }
 }
