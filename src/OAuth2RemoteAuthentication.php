@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
-use Sympla\RemoteAuthentication\Exception\InvalidCredentialsException;
+use Sympla\Auth\Exception\InvalidCredentialsException;
 
 /**
  * Class OAuth2RemoteAuthentication
