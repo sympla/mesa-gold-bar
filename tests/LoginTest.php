@@ -11,6 +11,7 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Exception\RequestException;
 use PHPUnit\Framework\TestCase;
 use Sympla\Auth\Client;
+use Sympla\Auth\PasswordClient;
 
 class LoginController extends TestCase
 {
@@ -40,7 +41,7 @@ class LoginController extends TestCase
 
         $guzzle = new Guzzle(['handler' => $handler]);
 
-        $client = new Client('client_id', 'client_secret');
+        $client = new PasswordClient($guzzle, 'client_id', 'client_secret', 'http://127.0.0.1/token', 'http://127.0.0.1/user');
 
         $inspector = new \ReflectionObject($client);
         $property = $inspector->getProperty('guzzle');

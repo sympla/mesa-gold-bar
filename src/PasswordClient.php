@@ -3,42 +3,50 @@
 namespace Sympla\Auth;
 
 use GuzzleHttp\Client as Guzzle;
+use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
 use Sympla\Auth\Exception;
 
-class Client
+class PasswordClient
 {
     const ENDPOINT_TOKEN = 'oauth/v2/token';
     const ENDPOINT_USER = 'api/user/me';
 
-    /**dd
-     * @var string
-     */
+    /** @var string */
     private $clientId;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $clientSecret;
 
-    /**
-     * @var Guzzle
-     */
+    /** @var Guzzle */
     private $guzzle;
 
+    /** @var string */
+    private $tokenEndpoint;
+
+    /** @var  string */
+    private $userEndpoint;
+
     /**
-     * @param string $clientId
-     * @param string $clientSecret
+     * PasswordClient constructor.
+     * @param Guzzle $httpClient                A Guzzle ClientInterface
+     * @param string $clientId                  The OAuth client_id
+     * @param string $clientSecret              The OAuth client_secret
+     * @param string $userInformationEndpoint   A full URL to fetch user information from its token
+     * @param string $tokenEndpoint             The endpoint to fetch oauth tokens
      */
-    public function __construct(string $clientId, string $clientSecret)
-    {
+    public function __construct(
+        Guzzle $httpClient,
+        string $clientId,
+        string $clientSecret,
+        string $userInformationEndpoint,
+        string $tokenEndpoint
+    ) {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-
-        $this->guzzle = new Guzzle([
-            'base_uri' => 'https://accounts.sympla.com.br',
-            'timeout' => 2,
-        ]);
+        $this->userEndpoint = $userInformationEndpoint;
+        $this->tokenEndpoint = $tokenEndpoint;
+        $this->guzzle = $httpClient;
     }
 
     /**
@@ -49,7 +57,7 @@ class Client
      */
     public function login(string $email, string $password) : array
     {
-        $response = $this->guzzle->post(self::ENDPOINT_TOKEN, [
+        $response = $this->guzzle->post($this->tokenEndpoint, [
             'form_params' => [
                 'username' => $email,
                 'password' => $password,
@@ -72,7 +80,7 @@ class Client
 
         $token = $request->getHeader('Authorization');
         if (false === preg_match('/Bearer/', $token)) {
-            throw new InvalidCredentialsException(
+            throw new Exception\InvalidCredentialsException(
                 'The information passed in the Authorization header is not a valid Bearer token.'
             );
         }
@@ -80,6 +88,13 @@ class Client
         return $token;
     }
 
+    /**
+     *
+     *
+     * @param $accessToken
+     * @return array
+     * @throws Exception\InvalidCredentialsException
+     */
     public function getUser($accessToken) : array
     {
         if ($accessToken instanceof RequestInterface) {
@@ -97,7 +112,7 @@ class Client
         }
 
         try {
-            $response = $this->guzzle->get(self::ENDPOINT_USER, [
+            $response = $this->guzzle->get($this->userEndpoint, [
                 'headers' => [
                     'Authorization' => $accessToken
                 ]
@@ -106,7 +121,7 @@ class Client
             return json_decode($response->getBody()->getContents(), true);
         } catch (RequestException $e) {
             $error = json_decode($e->getResponse()->getBody()->getContents(), true)['error_description'];
-            throw new InvalidCredentialsException($error);
+            throw new Exception\InvalidCredentialsException($error);
         }
     }
 }

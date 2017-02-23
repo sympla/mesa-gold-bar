@@ -1,16 +1,16 @@
 <?php
 
-namespace Sympla\RemoteAuthentication;
+namespace Sympla\Auth;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
-use Sympla\RemoteAuthentication\Exception\InvalidCredentialsException;
+use Sympla\Auth\Exception\InvalidCredentialsException;
 
 /**
  * Class OAuth2RemoteAuthentication
- * @package Sympla\RemoteAuthentication
+ * @package Sympla\Auth
  */
 class OAuth2RemoteAuthentication
 {
@@ -23,7 +23,8 @@ class OAuth2RemoteAuthentication
 
     /**
      * OAuth2RemoteAuthentication constructor.
-     * @param $serverEndpoint
+     * @param ClientInterface $client
+     * @param string $serverEndpoint
      */
     public function __construct(ClientInterface $client, $serverEndpoint)
     {
@@ -34,14 +35,15 @@ class OAuth2RemoteAuthentication
     /**
      * Discovers a user by its access token.
      *
-     * @param $accessToken The access token.
+     * @param string $accessToken The access token.
      * @throws InvalidCredentialsException
      * @returns array User information.
      */
     public function getUserFromToken($accessToken)
     {
         try {
-            $response = $this->client->get(
+            $response = $this->client->request(
+                'GET',
                 $this->serverEndpoint,
                 [
                     'headers' => [
@@ -54,8 +56,7 @@ class OAuth2RemoteAuthentication
             throw new InvalidCredentialsException($error);
         }
 
-        $user = json_decode($response->getBody()->getContents(), true);
-        return $user;
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     /**
@@ -75,7 +76,7 @@ class OAuth2RemoteAuthentication
             );
         }
 
-        $params = explode(" ", $token);
+        $params = explode(' ', $token);
         if ($params[0] !== 'Bearer' || count($params) !== 2) {
             throw new InvalidCredentialsException(
                 'The information passed in the Authorization header is not a valid Bearer token.'
