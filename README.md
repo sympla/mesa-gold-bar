@@ -24,7 +24,7 @@ using either the raw token or a PSR-7 request object:
 
 require_once "vendor/autoload.php";
 
-use Sympla\RemoteAuthentication\OAuth2RemoteAuthentication;
+use Sympla\Auth\OAuth2RemoteAuthentication;
 
 $authenticator = new OAuth2RemoteAuthentication(
     new GuzzleHttp\Client,
@@ -42,6 +42,42 @@ var_dump($user); // dumps information fetched from the endpoint server about the
 
 ```
 
+## Middleware
+
+This library now also has a SlimMiddleware for retrieving user credentials.
+
+Just add the middleware:
+
+```php
+<?php
+#middleware.php
+$app->add(new \Sympla\Auth\Middleware\SlimMiddleware(
+    new \GuzzleHttp\Client,
+    $app->getContainer(),
+    [
+        'protected' => ['/^\/admin\//'], //This is a regex for the protected URIs 
+        'authentication_server' => getenv('USER_INFO_ENDPOINT') //This is where the middleware
+                                                                //should try to fetch the user info from
+    ]
+));
+```
+
+Then, from any of the `protected` routes, you can simply fetch the `user` object
+from your DIC:
+
+```php
+<?php
+#routes.php
+$app->get('/admin', function ($request, $response, $args) {
+    $user = $this->get('user');
+    var_dump($user);
+});
+```
+
 ## Author
 
 Pedro Cordeiro <pedro.cordeiro@sympla.com.br>
+
+## License
+
+This project is distributed under the MIT License. Check [LICENSE][LICENSE.md] for more information.
