@@ -9,7 +9,7 @@ This library helps identifying users by their access tokens.
 
 Install the package using composer:
 
-    $ composer require sympla/oauth-remote-authentication ~1.0
+    $ composer require sympla/mesa-gold-bar ~3.0
     
 That's it.
 
