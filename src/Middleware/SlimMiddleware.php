@@ -31,7 +31,7 @@ class SlimMiddleware
         callable $next
     ) {
         //No paths protected, everything is public. Do not authenticate.
-        if (!isset($this->options["protected"])) {
+        if (!isset($this->options["protected"]) || strtoupper($request->getMethod()) === 'OPTIONS') {
             return $next($request, $response);
         }
 
