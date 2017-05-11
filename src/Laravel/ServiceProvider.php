@@ -11,7 +11,7 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function boot()
     {
-        $this->publishes([$this->configPath() => config_path('cors.php')]);
+        $this->publishes([$this->configPath() => config_path('sympla.php')]);
 
         $auth = $this->app->make('auth');
 
