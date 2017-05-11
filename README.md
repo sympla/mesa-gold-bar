@@ -86,7 +86,7 @@ Then, publish the configuration:
 
     $ php artisan vendor:publish --provider="Sympla\Auth\Laravel\ServiceProvider"
 
-Once your application is configured, go to `config/auth.php` and change the `api` section:
+Once your application is configured, go to `config/auth.php` and change the `guard` section:
 
 ```
      'guards' => [
@@ -95,6 +95,16 @@ Once your application is configured, go to `config/auth.php` and change the `api
              'provider' => 'oauth',
          ],
      ],
+```
+
+And the `providers` section:
+
+```
+    'providers' => [
+        'oauth' => [
+            'driver' => 'oauth'
+        ],
+    ],
 ```
 
 Then, activate the `auth:api` as a middleware for your api.

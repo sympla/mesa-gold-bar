@@ -33,7 +33,8 @@ class ServiceProvider extends BaseServiceProvider
                 new Guzzle(),
                 $config['client_id'],
                 $config['client_secret'],
-                $config['user_endpoint']
+                $config['user_endpoint'],
+                $config['token_endpoint']
             );
         });
     }
