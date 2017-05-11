@@ -11,6 +11,8 @@ class ServiceProvider extends BaseServiceProvider
 {
     public function boot()
     {
+        $this->publishes([$this->configPath() => config_path('cors.php')]);
+
         $auth = $this->app->make('auth');
 
         $auth->provider('oauth', function ($app, array $config) {
@@ -22,6 +24,8 @@ class ServiceProvider extends BaseServiceProvider
 
     public function register()
     {
+        $this->mergeConfigFrom($this->configPath(), 'sympla');
+
         $this->app->bind('sympla.oauth.password_client', function ($app) {
             $config = $app->config['sympla']['oauth'];
 
@@ -32,5 +36,10 @@ class ServiceProvider extends BaseServiceProvider
                 $config['user_endpoint']
             );
         });
+    }
+
+    protected function configPath()
+    {
+        return __DIR__ . '/../../config/sympla.php';
     }
 }
