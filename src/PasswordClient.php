@@ -9,9 +9,6 @@ use Sympla\Auth\Exception;
 
 class PasswordClient
 {
-    const ENDPOINT_TOKEN = 'oauth/v2/token';
-    const ENDPOINT_USER = 'api/user/me';
-
     /** @var string */
     private $clientId;
 
@@ -28,7 +25,6 @@ class PasswordClient
     private $userEndpoint;
 
     /**
-     * PasswordClient constructor.
      * @param Guzzle $httpClient                A Guzzle ClientInterface
      * @param string $clientId                  The OAuth client_id
      * @param string $clientSecret              The OAuth client_secret
