@@ -103,7 +103,7 @@ class PasswordClient
             );
         }
 
-        if (false === preg_match('/Bearer/', $accessToken)) {
+        if (false == preg_match('/Bearer/', $accessToken)) {
             $accessToken = "Bearer ${accessToken}";
         }
 
@@ -114,9 +114,13 @@ class PasswordClient
                 ]
             ]);
 
-            return json_decode($response->getBody()->getContents(), true);
+            return json_decode((string)$response->getBody(), true);
         } catch (RequestException $e) {
-            $error = json_decode($e->getResponse()->getBody()->getContents(), true)['error_description'];
+            $error = $e->getMessage();
+            if ($response = $e->getResponse()) {
+                $error = json_decode((string)$response()->getBody(), true)['error_description'];
+            }
+
             throw new Exception\InvalidCredentialsException($error);
         }
     }
