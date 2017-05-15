@@ -118,7 +118,7 @@ class PasswordClient
         } catch (RequestException $e) {
             $error = $e->getMessage();
             if ($response = $e->getResponse()) {
-                $error = json_decode((string)$response()->getBody(), true)['error_description'];
+                $error = json_decode((string)$response->getBody(), true)['error_description'];
             }
 
             throw new Exception\InvalidCredentialsException($error);
