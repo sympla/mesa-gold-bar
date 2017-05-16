@@ -17,7 +17,9 @@ class ServiceProvider extends BaseServiceProvider
 
         $auth->provider('oauth', function ($app, array $config) {
             return new OAuthUserProvider(
-                $app->make('sympla.oauth.password_client')
+                $app->make('sympla.oauth.password_client'),
+                $config,
+                $app->make('request')
             );
         });
     }

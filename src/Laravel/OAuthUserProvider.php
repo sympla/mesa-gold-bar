@@ -5,6 +5,7 @@ namespace Sympla\Auth\Laravel;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Http\Request;
 use Sympla\Auth\PasswordClient;
 use Sympla\Auth\Exception;
 
@@ -12,9 +13,15 @@ class OAuthUserProvider implements UserProvider
 {
     private $passwordClient;
 
-    public function __construct(PasswordClient $passwordClient)
+    private $config;
+
+    private $request;
+    
+    public function __construct(PasswordClient $passwordClient, array $config, Request $request)
     {
         $this->passwordClient = $passwordClient;
+        $this->config = $config;
+        $this->request = $request;
     }
 
     public function retrieveById($identifier)
@@ -34,11 +41,24 @@ class OAuthUserProvider implements UserProvider
     public function retrieveByCredentials(array $credentials)
     {
         try {
-            return $this->passwordClient->getUser(
+            $data = $this->passwordClient->getUser(
                 $credentials['api_token']
             );
+
+            $this->request->credentials = $data;
+
+            if (true === array_key_exists('model', $this->config)) {
+                $model = $this->config['model'];
+                
+                if ($user = $model::whereEmail($data['email'])->first()) {
+                    return $user;
+                }
+
+                return new $model($data);
+            }
+            return $data;
         } catch (Exception\InvalidCredentialsException $e) {
-            throw new AuthenticationException;
+            throw new AuthenticationException($e->getMessage());
         }
     }
 
