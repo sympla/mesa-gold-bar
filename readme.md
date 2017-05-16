@@ -103,6 +103,7 @@ And the `providers` section:
     'providers' => [
         'oauth' => [
             'driver' => 'oauth'
+            'model' => App\User::class,
         ],
     ],
 ```
