@@ -33,16 +33,16 @@ class PasswordClient
      */
     public function __construct(
         Guzzle $httpClient,
-        string $clientId,
-        string $clientSecret,
-        string $userInformationEndpoint,
-        string $tokenEndpoint
+        string $clientId = '',
+        string $clientSecret = '',
+        string $userInformationEndpoint = '',
+        string $tokenEndpoint = ''
     ) {
+        $this->guzzle = $httpClient;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->userEndpoint = $userInformationEndpoint;
         $this->tokenEndpoint = $tokenEndpoint;
-        $this->guzzle = $httpClient;
     }
 
     /**
