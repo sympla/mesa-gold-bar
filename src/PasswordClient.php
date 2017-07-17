@@ -30,19 +30,22 @@ class PasswordClient
      * @param string $clientSecret              The OAuth client_secret
      * @param string $userInformationEndpoint   A full URL to fetch user information from its token
      * @param string $tokenEndpoint             The endpoint to fetch oauth tokens
+     * @param string $authMethod                The auth method
      */
     public function __construct(
         Guzzle $httpClient,
         string $clientId = '',
         string $clientSecret = '',
         string $userInformationEndpoint = '',
-        string $tokenEndpoint = ''
+        string $tokenEndpoint = '',
+        string $authMethod = 'get'
     ) {
         $this->guzzle = $httpClient;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->userEndpoint = $userInformationEndpoint;
         $this->tokenEndpoint = $tokenEndpoint;
+        $this->authMethod = $authMethod;
     }
 
     /**
@@ -103,16 +106,20 @@ class PasswordClient
             );
         }
 
-        if (false == preg_match('/Bearer/', $accessToken)) {
+        if ($this->authMethod == 'header' && false == preg_match('/Bearer/', $accessToken)) {
             $accessToken = "Bearer ${accessToken}";
         }
 
         try {
-            $response = $this->guzzle->get($this->userEndpoint, [
-                'headers' => [
-                    'Authorization' => $accessToken
-                ]
-            ]);
+            if ($this->authMethod == 'header') {
+                $response = $this->guzzle->get($this->userEndpoint, [
+                    'headers' => [
+                        'Authorization' => $accessToken
+                    ]
+                ]);
+            } else {
+                $response = $this->guzzle->get($this->userEndpoint.'?access_token='.$accessToken);
+            }
 
             return json_decode((string)$response->getBody(), true);
         } catch (RequestException $e) {
