@@ -36,7 +36,8 @@ class ServiceProvider extends BaseServiceProvider
                 $config['client_id'],
                 $config['client_secret'],
                 $config['user_endpoint'],
-                $config['token_endpoint']
+                $config['token_endpoint'],
+                $config['auth_method']
             );
         });
     }
