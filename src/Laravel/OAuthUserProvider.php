@@ -38,7 +38,7 @@ class OAuthUserProvider implements UserProvider
         // not used
     }
 
-    public function createUser($data)
+    public function createUser($model, $data)
     {
         $data['name'] = $data['email'];
         $data['password'] = Hash::make(str_random(10));
@@ -63,7 +63,7 @@ class OAuthUserProvider implements UserProvider
                     return $user;
                 }
 
-                return self::createUser();
+                return self::createUser($model, $data);
             }
             return $data;
         } catch (Exception\InvalidCredentialsException $e) {
