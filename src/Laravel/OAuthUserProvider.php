@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
 use Sympla\Auth\PasswordClient;
 use Sympla\Auth\Exception;
+use Hash;
 
 class OAuthUserProvider implements UserProvider
 {
