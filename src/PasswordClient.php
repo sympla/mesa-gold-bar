@@ -38,7 +38,10 @@ class PasswordClient
         string $clientSecret = '',
         string $userInformationEndpoint = '',
         string $tokenEndpoint = '',
-        string $authMethod = 'get'
+        string $authMethod = 'get',
+        string $clientProvider = '',
+        string $clientDomain = '',
+        string $clientServiceAccount = ''
     ) {
         $this->guzzle = $httpClient;
         $this->clientId = $clientId;
@@ -46,6 +49,9 @@ class PasswordClient
         $this->userEndpoint = $userInformationEndpoint;
         $this->tokenEndpoint = $tokenEndpoint;
         $this->authMethod = $authMethod;
+        $this->clientProvider = $clientProvider;
+        $this->clientDomain = $clientDomain;
+        $this->clientServiceAccount = $clientServiceAccount;
     }
 
     /**
@@ -119,6 +125,8 @@ class PasswordClient
                 ]);
             } else {
                 $response = $this->guzzle->get($this->userEndpoint.'?access_token='.$accessToken);
+                $tokenInfo = json_decode((string)$response->getBody(), true);
+                $this->checkClientProvider($tokenInfo);
             }
 
             return json_decode((string)$response->getBody(), true);
@@ -129,6 +137,36 @@ class PasswordClient
             }
 
             throw new Exception\InvalidCredentialsException($error);
+        }
+    }
+
+    /**
+     * @param $tokenInfo
+     */
+    public function checkClientProvider($tokenInfo)
+    {
+        switch (strtolower($this->clientProvider)) {
+            // Google
+            case 'google':
+                if (!isset($tokenInfo['email'])) {
+                    throw new Exception\InvalidCredentialsException(
+                        'Invalid token - Email not found'
+                    );
+                }
+
+                list($user, $domain) = explode('@', $tokenInfo['email']);
+                
+                // Check hosted domain
+                if ($domain !== $this->clientDomain && $tokenInfo['email'] !== $this->clientServiceAccount) {
+                    throw new Exception\InvalidCredentialsException(
+                        'Mismatch domain'
+                    );
+                }
+                break;
+            
+            default:
+                # code...
+                break;
         }
     }
 }
