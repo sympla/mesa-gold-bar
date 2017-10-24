@@ -2,6 +2,7 @@
 
 namespace Sympla\Auth;
 
+use Firebase\JWT\JWT;
 use GuzzleHttp\Client as Guzzle;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\RequestInterface;
@@ -41,7 +42,8 @@ class PasswordClient
         string $authMethod = 'get',
         string $clientProvider = '',
         string $clientDomain = '',
-        string $clientServiceAccount = ''
+        string $clientServiceAccount = '',
+        string $publicKeyPath = ''
     ) {
         $this->guzzle = $httpClient;
         $this->clientId = $clientId;
@@ -52,6 +54,7 @@ class PasswordClient
         $this->clientProvider = $clientProvider;
         $this->clientDomain = $clientDomain;
         $this->clientServiceAccount = $clientServiceAccount;
+        $this->publicKeyPath = $publicKeyPath;
     }
 
     /**
@@ -112,6 +115,10 @@ class PasswordClient
             );
         }
 
+        if ($this->isJWT($accessToken)) {
+            return $this->validateJWT($accessToken);
+        } 
+
         if ($this->authMethod == 'header' && false == preg_match('/Bearer/', $accessToken)) {
             $accessToken = "Bearer ${accessToken}";
         }
@@ -136,6 +143,42 @@ class PasswordClient
                 $error = json_decode((string)$response->getBody(), true)['error_description'];
             }
 
+            throw new Exception\InvalidCredentialsException($error);
+        }
+    }
+
+    /**
+     * @param $accessToken
+     */
+    public function isJWT($accessToken)
+    {
+        $tks = explode('.', $accessToken);
+        if (count($tks) === 3) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param $accessToken
+     * @throws Exception\InvalidCredentialsException
+     */
+    public function validateJWT($accessToken)
+    {
+        try {
+            $publicKey = file_get_contents(resource_path($this->publicKeyPath));
+            $decoded = JWT::decode($accessToken, $publicKey, array('RS256'));
+
+            if (true === $decoded->exp < time()) {
+                throw new Exception\InvalidCredentialsException(
+                    'Token has expired'
+                );
+            }
+
+            $accessToken = $decoded->oauth->credentials->access_token;
+            return (array) $decoded->oauth->profile;
+        } catch (\Exception $e) {
+            $error = $e->getMessage();
             throw new Exception\InvalidCredentialsException($error);
         }
     }
