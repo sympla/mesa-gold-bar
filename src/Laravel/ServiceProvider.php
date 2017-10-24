@@ -40,7 +40,8 @@ class ServiceProvider extends BaseServiceProvider
                 $config['auth_method'],
                 $config['client_provider'],
                 $config['client_domain'],
-                $config['client_service_account']
+                $config['client_service_account'],
+                $config['public_key_path']
             );
         });
     }
