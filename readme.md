@@ -110,9 +110,9 @@ And the `providers` section:
 
 Then, activate the `auth:api` as a middleware for your api.
 
-## Author
+## Contact
 
-Pedro Cordeiro <pedro.cordeiro@sympla.com.br>
+Bruno Coelho <bruno.coelho@sympla.com.br>
 
 ## License
 

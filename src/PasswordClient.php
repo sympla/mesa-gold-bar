@@ -116,8 +116,10 @@ class PasswordClient
         }
 
         if ($this->isJWT($accessToken)) {
-            return $this->validateJWT($accessToken);
-        } 
+            if ($response = $this->validateJWT($accessToken)) {
+                return $response;
+            }
+        }
 
         if ($this->authMethod == 'header' && false == preg_match('/Bearer/', $accessToken)) {
             $accessToken = "Bearer ${accessToken}";
@@ -166,6 +168,10 @@ class PasswordClient
     public function validateJWT($accessToken)
     {
         try {
+            if (empty($this->publicKeyPath)) {
+                return false;
+            }
+            
             $publicKey = file_get_contents(resource_path($this->publicKeyPath));
             $decoded = JWT::decode($accessToken, $publicKey, array('RS256'));
 
