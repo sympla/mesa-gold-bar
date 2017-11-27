@@ -180,9 +180,7 @@ class PasswordClient
                     'Token has expired'
                 );
             }
-
-            $accessToken = $decoded->oauth->credentials->access_token;
-            return (array) $decoded->oauth->profile;
+            return (array) $decoded->profile;
         } catch (\Exception $e) {
             $error = $e->getMessage();
             throw new Exception\InvalidCredentialsException($error);
