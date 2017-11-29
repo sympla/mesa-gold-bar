@@ -182,8 +182,7 @@ class PasswordClient
             }
             return (array) $decoded->profile;
         } catch (\Exception $e) {
-            $error = $e->getMessage();
-            throw new Exception\InvalidCredentialsException($error);
+            return false;
         }
     }
 
