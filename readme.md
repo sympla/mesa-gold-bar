@@ -81,7 +81,6 @@ into `config/app.php`:
 
     Sympla\Auth\Laravel\ServiceProvider::class
 
-
 Then, publish the configuration:
 
     $ php artisan vendor:publish --provider="Sympla\Auth\Laravel\ServiceProvider"
@@ -110,9 +109,46 @@ And the `providers` section:
 
 Then, activate the `auth:api` as a middleware for your api.
 
+## Using with Lumen
+
+After install it, register the service provider into your Lumen application
+into `bootstrap/app.php`:
+
+    $app->register(Sympla\Auth\Lumen\ServiceProvider::class);
+
+After register the service provider, install the package for publish in Lumen application
+    
+    $ composer require laravelista/lumen-vendor-publish
+
+Then, publish the configuration:
+
+    $ php artisan vendor:publish --provider="Sympla\Auth\Lumen\ServiceProvider"
+
+Once your application is configured, go to `config/auth.php` and change the `guard` section:
+
+```
+     'guards' => [
+         'api' => [
+             'driver' => 'token',
+             'provider' => 'oauth',
+         ],
+     ],
+```
+
+And the `providers` section:
+
+```
+    'providers' => [
+        'oauth' => [
+            'driver' => 'oauth'
+            'model' => App\User::class,
+        ],
+    ],
+```
+
 ## Contact
 
-Bruno Coelho <bruno.coelho@sympla.com.br>
+Bruno Coelho <pedro.igor@sympla.com.br>
 
 ## License
 
