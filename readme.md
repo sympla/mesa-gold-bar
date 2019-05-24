@@ -111,10 +111,22 @@ Then, activate the `auth:api` as a middleware for your api.
 
 ## Using with Lumen
 
-After install it, register the service provider into your Lumen application
+After install it, register the service provider, route middleware, Hash facade and enable eloquent into your Lumen application
 into `bootstrap/app.php`:
-
+    
+    //Service provider
     $app->register(Sympla\Auth\Lumen\ServiceProvider::class);
+    
+    // Route middleware
+    $app->routeMiddleware([
+        'auth' => App\Http\Middleware\Authenticate::class,
+    ]);
+    
+    //Hash facade
+    $app->withFacades(true, ['Illuminate\Support\Facades\Hash' => 'Hash']);
+    
+    //Enable eloquent
+    $app->withEloquent();
 
 After register the service provider, install the package for publish in Lumen application
     
@@ -124,7 +136,7 @@ Then, publish the configuration:
 
     $ php artisan vendor:publish --provider="Sympla\Auth\Lumen\ServiceProvider"
 
-Once your application is configured, go to `config/auth.php` and change the `guard` section:
+Once your application is configured, go to `config/auth.php`, if the file does not exist just create it, and change/create the `guard` section:
 
 ```
      'guards' => [
@@ -148,7 +160,7 @@ And the `providers` section:
 
 ## Contact
 
-Bruno Coelho <pedro.igor@sympla.com.br>
+Pedro Igor <pedro.igor@sympla.com.br>
 
 ## License
 
